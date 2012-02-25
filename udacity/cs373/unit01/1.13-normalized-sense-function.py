@@ -13,7 +13,6 @@ def m_sum(m):
         sum += n
     return sum
 
-
 pHit = 0.6
 pMiss = 0.2
 p = uniform_probability(5)

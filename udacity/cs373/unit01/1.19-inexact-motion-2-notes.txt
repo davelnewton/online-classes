@@ -1,0 +1,18 @@
+Starting position is uncertain, so basically calculating
+as if moving from *each* position. So the 0.8/0.1/0.1 stuff
+comes from the starting position's probability.
+
+0.5 * 0.8 = 0.40
+0.5 * 0.1 = 0.05
+
+x0    x1    x2    x3    x4
+0.0   0.5   0.0   0.5   0.0
+
+            0.05  0.4   0.05   x1 calc
+0.4   0.05              0.05   x3 calc
+0.4   0.05  0.05  0.4   0.10   P(x1 + x3), sum is 1.0
+
+* Equal probability of being in x0, x3 (cyclical world).
+* Slight chance of being in x1, x2
+* Slightly elevated chance of being in x4 (from x1 overshoot, x3 undershoot)
+
