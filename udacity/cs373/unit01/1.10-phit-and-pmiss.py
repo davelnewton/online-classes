@@ -14,8 +14,8 @@ def m_sum(m):
     return sum
 
 
-pHit = 0.6
-pMiss = 0.2
+pHit = 0.6 # 1.0
+pMiss = 0.2 # 0
 p = uniform_probability(5)
 m = [pMiss, pHit, pHit, pMiss, pMiss]
 p = m_mult(p, m)
