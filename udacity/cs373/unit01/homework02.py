@@ -1,3 +1,4 @@
+# Formats a 2D array, spacing floats and strings the same.
 def fmt(x):
     f = "%s"
     if (type(x) == float) or (type(x) == int):
@@ -6,11 +7,13 @@ def fmt(x):
         f = "%6s"
     return f
 
+# Pretty-prints an array row.
 def pp(arr):
     for s in [fmt(x) % x for x in arr]:
         print s,
     print
 
+# Pretty-prints a 2D array.
 def pp2d(arrs):
     for yarr in arrs:
         pp(yarr)
@@ -23,6 +26,16 @@ def idx(arr):
 def z2d(x, y):
     return [[0]*x for i in range(0, y)]
 
+# Creates x by y array with incrementing n in each cell; for testing.
+def n2d(x, y):
+    q = z2d(x, y)
+    n = 0
+    for i in range(0, y):
+        for j in range(0, x):
+            q[i][j] = n
+            n += 1
+    return q
+            
 # Uniform probability matrix given n positions.
 def u2dn(x, y, positions):
     vu = 1.0 / len(positions)
@@ -66,7 +79,7 @@ def S2d(p, U):
 def cidx_2d(a, x, y):
     ylen = len(a)
     xlen = len(a[0])
-    return swap([x % xlen, y % ylen])
+    return [x % xlen, y % ylen]
 
 # Or itertools.permutations([-1, 0, 1], 2)
 def offsets():
@@ -76,16 +89,31 @@ def offsets():
             q.append([i, j])
     return q
 
+def xM2d(p, Z):
+    dy, dx = Z # [0, 1] is "move 1 right", dy=0, dx=1
+    q = z2d(len(p[0]), len(p))
+    for y in idx(p):
+        for x in idx(p[y]):
+            pval = p[y][x]
+            print "(x=%d, y=%d) = %d" % (x, y, pval)
+            for ox, oy in offsets():
+                print "  (ox=%2d, oy=%2d)" % (ox, oy),
+                cox, coy = cidx_2d(p, ox, oy)
+                mult = p_move if ((ox == 0) and (oy == 0)) else p_move_wrong
+                print "  mult=%1.2f" % mult,
+                print "  (cx=%2d, cy=%2d)" % (cox, coy)
+
+# xM2d(pn, [0, 1])
+
 def swap(a):
     return [a[1], a[0]]
 
 # Z will be array/tuple (x, y).
 def M2d(p, Z):
-    Z = swap(Z) # Lame.
     q = z2d(len(p[0]), len(p))
-    dx, dy = Z
+    dy, dx = Z
     for y in idx(p):
-        for x in idx(p[0]):
+        for x in idx(y):
             pval = p[y][x]
             print x, ",", y, "=", pval
             for oy, ox in offsets():
