@@ -81,31 +81,34 @@ def swap(a):
 
 # Z will be array/tuple (x, y).
 def M2d(p, Z):
-    Z = swap(Z) # Lame.
     q = z2d(len(p[0]), len(p))
-    dx, dy = Z
+    dy, dx = Z
     for y in idx(p):
         for x in idx(p[0]):
             pval = p[y][x]
-            print x, ",", y, "=", pval
-            for oy, ox in offsets():
-                print "  ox, oy=", ox, ",", oy
-                mult = p_move if ((ox == 0) and (oy == 0)) else p_move_wrong
-                n = pval * mult
-                print "   ", cidx_2d(p, x+ox, y+oy), "=", n
-                qx, qy = cidx_2d(p, x+dx+ox, y+dy+oy)
-                print "   ", qx, ",", qy, "+=", n
-                q[qy][qx] += n
-    pp2d(q)
+            mult = p_move
+            n = pval * mult
+            qx, qy = cidx_2d(p, x+dx, y+dy)
+            q[qy][qx] += n
+
+            mult = p_move_wrong
+            n = pval * mult
+            qx, qy = cidx_2d(p, x, y)
+            q[qy][qx] += n
     return N2d(q)
+
+def MS2d(p, Zs, Us):
+    q = p
+    for i in idx(Zs):
+        q = M2d(q, Zs[i])
+        q = S2d(q, Us[i])
+    return q
 
 #
 #
 #
 
 R, G = "red", "green"
-measurements = [R, G]
-motions = [[0, 0], [0, 1]]
 
 sensor_right = 1.0 # Probability sensor is correct.
 sensor_wrong = 1.0 - sensor_right
@@ -214,6 +217,30 @@ pp2d(p2s)
 sensor_right = 0.8 # Probability sensor is correct.
 sensor_wrong = 1.0 - sensor_right
 
+p_move = 1.0       # Probability move happens correctly.
+p_move_wrong = 1.0 - p_move
+
+pp2d(colors)
+p = u2d(3, 3)
+pp2d(p)
+
+p1m = M2d(p, [0, 0])
+pp2d(p1m)
+p1s = S2d(p1m, R)
+pp2d(p1s)
+
+p2m = M2d(p1s, [0, 1])
+pp2d(p2m)
+p2s = S2d(p2m, R)
+pp2d(p2s)
+
+#
+#
+#
+
+sensor_right = 0.8 # Probability sensor is correct.
+sensor_wrong = 1.0 - sensor_right
+
 p_move = 0.5       # Probability move happens correctly.
 p_move_wrong = 1.0 - p_move
 
@@ -235,25 +262,35 @@ pp2d(p2s)
 #
 #
 
-#
-#
-#
+measurements = [R, R]
+motions = [[0, 0], [0, 1]]
+
+sensor_right = 1.0 # Probability sensor is correct.
+sensor_wrong = 1.0 - sensor_right
+
+p_move = 0.5       # Probability move happens correctly.
+p_move_wrong = 1.0 - p_move
+
+q = MS2d(p, motions, measurements)
+pp2d(q)
 
 #
 #
 #
 
-#
-#
-#
+colors = [[R, G, G, R, R],
+          [R, R, G, R, R],
+          [R, R, G, G, R],
+          [R, R, R, R, R]]
+measurements = [G, G, G, G, G]
+motions = [[0, 0], [0, 1], [1, 0], [1, 0], [0, 1]]
 
-#
-#
-#
+sensor_right = 0.7 # Probability sensor is correct.
+sensor_wrong = 1.0 - sensor_right
 
-#p = u2d(3, 3)
-#pp2d(p)
+p_move = 0.8       # Probability move happens correctly.
+p_move_wrong = 1.0 - p_move
 
-#pp2d(s2d(p, R))
-
-#M2d(p, [1, 0])
+p = u2d(5, 4)
+q = MS2d(p, motions, measurements)
+pp2d(q)

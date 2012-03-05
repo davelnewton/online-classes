@@ -95,13 +95,54 @@ def xM2d(p, Z):
     for y in idx(p):
         for x in idx(p[y]):
             pval = p[y][x]
-            print "(x=%d, y=%d) = %d" % (x, y, pval)
+            print "p(x=%d, y=%d) = %1.4f" % (x, y, pval)
             for ox, oy in offsets():
-                print "  (ox=%2d, oy=%2d)" % (ox, oy),
-                cox, coy = cidx_2d(p, ox, oy)
+                #if not ((abs(ox) == 1) and (abs(oy) == 1)):
                 mult = p_move if ((ox == 0) and (oy == 0)) else p_move_wrong
-                print "  mult=%1.2f" % mult,
-                print "  (cx=%2d, cy=%2d)" % (cox, coy)
+                mpval = pval * mult
+                print "  (ox=%2d, oy=%2d)" % (ox, oy)
+                print "    pval=%1.4f x mult=%1.2f = %1.4f (mpval)" % (pval, mult, mpval)
+                cdx, cdy = cidx_2d(p, ox+dx, oy+dy)
+                print "    q(cdx=%2d, cdy=%2d)+=%1.4f (%1.4f+%1.4f)" % (cdx, cdy, mpval, q[cdy][cdx], mpval)
+                q[cdy][cdx] += mpval
+            pp2d(q) if x != idx(p[y])[-1:][0] else False
+        pp2d(q) if y != idx(p)[-1:][0] else False
+    pp2d(q)
+    return N2d(q)
+
+def xx_offsets(dx, dy):
+    q = []
+    #if (dx == 0) and (dy == 0):
+    #    return q
+    
+    xoffs = [-1, 0, 1] if abs(dx) == 1 else [0]
+    yoffs = [-1, 0, 1] if abs(dy) == 1 else [0]
+    for dx in xoffs:
+        for dy in yoffs:
+            q.append([dx, dy])
+    return q
+            
+def xxM2d(p, Z):
+    dy, dx = Z # [0, 1] is "move 1 right", dy=0, dx=1
+    q = z2d(len(p[0]), len(p))
+    for y in idx(p):
+        for x in idx(p[y]):
+            pval = p[y][x]
+            print "p(x=%d, y=%d) = %1.4f" % (x, y, pval)
+            for oy, ox in offsets():#xx_offsets(dx, dy):
+                #if not ((abs(ox) == 1) and (abs(oy) == 1)):
+                mult = p_move if ((ox == 0) and (oy == 0)) else p_move_wrong
+                mpval = pval * mult
+                print "  (ox=%2d, oy=%2d)" % (ox, oy)
+                print "    pval=%1.4f x mult=%1.2f = %1.4f (mpval)" % (pval, mult, mpval)
+                cdx, cdy = cidx_2d(p, x+ox+dx, x+oy+dy)
+                print "    q(cdx=%2d, cdy=%2d)+=%1.4f (%1.4f+%1.4f)" % (cdx, cdy, mpval, q[cdy][cdx], mpval)
+                q[cdy][cdx] += mpval
+            pp2d(q) if x != idx(p[y])[-1:][0] else False
+        pp2d(q) if y != idx(p)[-1:][0] else False
+    pp2d(q)
+    return N2d(q)
+                
 
 # xM2d(pn, [0, 1])
 
@@ -242,7 +283,7 @@ pp2d(p2s)
 sensor_right = 0.8 # Probability sensor is correct.
 sensor_wrong = 1.0 - sensor_right
 
-p_move = 0.5       # Probability move happens correctly.
+p_move = 1.0       # Probability move happens correctly.
 p_move_wrong = 1.0 - p_move
 
 pp2d(colors)
@@ -254,7 +295,7 @@ pp2d(p1m)
 p1s = S2d(p1m, R)
 pp2d(p1s)
 
-p2m = M2d(p1s, [0, 1])
+p2m = xM2d(p1s, [0, 1])
 pp2d(p2m)
 p2s = S2d(p2m, R)
 pp2d(p2s)
